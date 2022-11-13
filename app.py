@@ -11,17 +11,19 @@ from slack_sdk.errors import SlackApiError
 from onboarding_tutorial import OnboardingTutorial
 
 load_dotenv()
+logger = logging.getLogger(__name__)
 
 SLACK_APP_TOKEN = os.environ["SLACK_APP_TOKEN"]
 SLACK_BOT_TOKEN = os.environ["SLACK_BOT_TOKEN"]
 
 app = App(token=SLACK_BOT_TOKEN, name="Joke Bot")
-logger = logging.getLogger(__name__)
+
+print(f'app token: {SLACK_APP_TOKEN}, bot token: {SLACK_BOT_TOKEN}')
 
 onboarding_tutorials_sent = {}
 
 
-@app.message(re.compile("^create channel[\s+](.+?)$"))  # type: ignore
+@app.message(re.compile(r"^create channel[\s+](.+?)$"))  # type: ignore
 def create_channel(message, client):
     print(message)
     if message["channel_type"] != "im":
@@ -50,6 +52,11 @@ def create_channel(message, client):
                 break
 
 
+@app.event("channel_created")
+def handle_channel_created_events(body, logger):
+    logger.info(body)
+
+
 @app.message(re.compile("^start$"))  # type: ignore
 def onboarding_message(message, client):
     channel_type = message["channel_type"]
@@ -60,6 +67,34 @@ def onboarding_message(message, client):
     response = client.conversations_open(users=user_id)
     channel = response["channel"]["id"]
     start_onboarding(user_id, channel, client)
+
+
+@app.message(re.compile(r"^write msg to channel #[\s+](.+?)$"))  # type: ignore
+def write_to_channel(message, client):
+    global settings
+    print(message)
+    if message["channel_type"] != "im":
+        return
+    user_id = message["user"]
+    channel_name = re.search(r'channel #[\s+](.+?)$', message['text']).group(1)
+    comm = f"write to channel {channel_name}"
+    logger.info(f"Command: < {comm} > from user {user_id}")
+    channel_id = None
+    for result in client.conversations_list():
+        if channel_id is not None:
+            break
+        for channel in result["channels"]:
+            if channel["name"] == channel_name:
+                channel_id = channel["id"]
+                # print(f"Found conversation ID: {channel_id}")
+                try:
+                    env_xoxp_token = ""
+                    client.chat_postMessage(channel=channel_id,
+                                            text=f"/poll “What times would work for a quick team meeting later?” “1pm” “2pm” “3pm”")
+                    client.chat_postMessage(channel=user_id, text='post msg "hello channel" :white_check_mark:')
+                except SlackApiError as e:
+                    print(f"Error: {e}")
+                break
 
 
 def start_onboarding(user_id: str, channel: str, client: WebClient):
