@@ -1,3 +1,6 @@
+from slack_sdk import WebClient
+
+
 class OnboardingTutorial:
     """Constructs the onboarding message and stores the state of which tasks were completed."""
 
@@ -40,7 +43,7 @@ class OnboardingTutorial:
         task_checkmark = self._get_checkmark(self.reaction_task_completed)
         text = (
             f"{task_checkmark} *Add an emoji reaction to this message* :thinking_face:\n"
-            "You can quickly respond to any message on Slack with an emoji reaction."
+            "You can quickly respond to any message on Slack with an emoji reaction. "
             "Reactions can be used for any purpose: voting, checking off to-do items, showing excitement."
         )
         information = (
@@ -74,3 +77,28 @@ class OnboardingTutorial:
             {"type": "section", "text": {"type": "mrkdwn", "text": text}},
             {"type": "context", "elements": [{"type": "mrkdwn", "text": information}]},
         ]
+
+
+onboarding_tutorials_sent = {}
+
+
+def start_onboarding(user_id: str, channel: str, client: WebClient):
+    onboarding_tutorial = OnboardingTutorial(channel)
+    msg = onboarding_tutorial.get_message_payload()
+    response = client.chat_postMessage(**msg)
+    onboarding_tutorial.timestamp = response["ts"]
+
+    if channel not in onboarding_tutorials_sent:
+        onboarding_tutorials_sent[channel] = {}
+    onboarding_tutorials_sent[channel][user_id] = onboarding_tutorial
+
+
+def send_onboarding(message, client):
+    channel_type = message["channel_type"]
+    if channel_type != "im":
+        return
+
+    user_id = message["user"]
+    response = client.conversations_open(users=user_id)
+    channel = response["channel"]["id"]
+    start_onboarding(user_id, channel, client)
