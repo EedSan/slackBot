@@ -17,12 +17,13 @@ def channel_creation(message, client, logger):
         client.chat_postMessage(channel=user_id,
                                 text=f"Can't create channel `{channel_name}`. Check if it's exist already")
     else:
-        msg_to_add = 'To invite other users to channel pls type `invite to [channel_name] [users]`'
+        msg_to_add = 'To invite other users to channel type `invite to [channel_name] [users_emails]`'
+        msg_to_add_info = "For detailed information type `help invite to channel`"
         channels_list = client.conversations_list()["channels"]
         for item in channels_list:
             if item["name"] == channel_name:
                 channel_id = item['id']
                 msg_created = f"Channel <#{channel_id}> is created :white_check_mark:"
                 client.conversations_invite(channel=channel_id, users=[user_id])
-                client.chat_postMessage(channel=user_id, text=f'{msg_created}. \n{msg_to_add}')
+                client.chat_postMessage(channel=user_id, text=f'{msg_created}. \n{msg_to_add}. {msg_to_add_info}')
                 break
