@@ -8,6 +8,8 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.errors import SlackApiError
 
 from event_handlers.channel_creation import channel_creation
+from event_handlers.channel_invitation import channel_invitation
+from event_handlers.display_help import disp_helps
 from event_handlers.emoji_handlers import update_emoji
 from event_handlers.onboarding_tutorial import send_onboarding
 
@@ -22,6 +24,11 @@ slack_app = App(token=SLACK_BOT_TOKEN, name="Automation Bot")
 @slack_app.message(re.compile(r"^create channel[\s+](.+?)$"))  # type: ignore
 def create_channel(message, client):
     channel_creation(message, client, logger)
+
+
+@slack_app.message(re.compile(r"^invite to[\s+](.+?)$"))  # type: ignore
+def invite_to_channel(message, client):
+    channel_invitation(message, client, logger)
 
 
 @slack_app.message(re.compile("^start$"))  # type: ignore
@@ -53,6 +60,11 @@ def write_to_channel(message, client):
                 except SlackApiError as e:
                     print(f"Error: {e}")
                 break
+
+
+@slack_app.message(re.compile(r"^help\s*(.*)$", flags=re.IGNORECASE))  # type: ignore
+def display_help(message, client):
+    disp_helps(message, client)
 
 
 @slack_app.event("reaction_added")
