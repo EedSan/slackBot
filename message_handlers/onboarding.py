@@ -1,7 +1,9 @@
 from slack_sdk import WebClient
 
+from helper import is_private_message, is_user_admin
 
-class OnboardingTutorial:
+
+class Onboarding:
     """Constructs the onboarding message and stores the state of which tasks were completed."""
 
     WELCOME_BLOCK = {
@@ -79,23 +81,22 @@ class OnboardingTutorial:
         ]
 
 
-onboarding_tutorials_sent = {}
+onboarding_sent = {}
 
 
 def start_onboarding(user_id: str, channel: str, client: WebClient):
-    onboarding_tutorial = OnboardingTutorial(channel)
+    onboarding_tutorial = Onboarding(channel)
     msg = onboarding_tutorial.get_message_payload()
     response = client.chat_postMessage(**msg)
     onboarding_tutorial.timestamp = response["ts"]
 
-    if channel not in onboarding_tutorials_sent:
-        onboarding_tutorials_sent[channel] = {}
-    onboarding_tutorials_sent[channel][user_id] = onboarding_tutorial
+    if channel not in onboarding_sent:
+        onboarding_sent[channel] = {}
+    onboarding_sent[channel][user_id] = onboarding_tutorial
 
 
 def send_onboarding(message, client):
-    channel_type = message["channel_type"]
-    if channel_type != "im":
+    if not is_private_message(message) or not is_user_admin(client, message['user']):
         return
 
     user_id = message["user"]
