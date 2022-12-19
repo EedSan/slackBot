@@ -2,10 +2,12 @@ import re
 
 from slack_sdk.errors import SlackApiError
 
+from helper import is_private_message, is_user_admin
+
 
 def channel_creation(message, client, logger):
     print(message)
-    if message["channel_type"] != "im":
+    if not is_private_message(message) or not is_user_admin(client, message['user']):
         return
 
     user_id = message["user"]

@@ -1,5 +1,7 @@
 import re
 
+from helper import is_private_message, is_user_admin
+
 
 def help_invite_to_channel(user_id):
     """
@@ -49,7 +51,7 @@ def general_help(user_id):
 
 def disp_helps(message, client):
     print(message)
-    if message["channel_type"] != "im":
+    if not is_private_message(message) or not is_user_admin(client, message['user']):
         return
 
     user_id = message["user"]
