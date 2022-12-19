@@ -7,11 +7,12 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.errors import SlackApiError
 
-from event_handlers.channel_creation import channel_creation
-from event_handlers.channel_invitation import channel_invitation
-from event_handlers.display_help import disp_helps
-from event_handlers.emoji_handlers import update_emoji
-from event_handlers.onboarding_tutorial import send_onboarding
+from helper import is_private_message, is_user_admin
+from message_handlers.channel_creation import channel_creation
+from message_handlers.channel_invitation import channel_invitation
+from message_handlers.display_help import disp_helps
+from message_handlers.invite_to_workspace import invite_to_workspace
+from message_handlers.onboarding import send_onboarding
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +40,7 @@ def onboarding(message, client):
 @slack_app.message(re.compile(r"^write msg to channel #[\s+](.+?)$"))  # type: ignore
 def write_to_channel(message, client):
     print(message)
-    if message["channel_type"] != "im":
+    if not is_private_message(message) or not is_user_admin(client, message['user']):
         return
     user_id = message["user"]
     channel_name = re.search(r'channel #[\s+](.+?)$', message['text']).group(1)
@@ -67,14 +68,19 @@ def display_help(message, client):
     disp_helps(message, client)
 
 
-@slack_app.event("reaction_added")
-def if_reacted_update_emoji(event, client):
-    update_emoji(event, client)
+@slack_app.message(re.compile(r"^(.*)join.slack.com/t/(.*)$"))  # type: ignore
+def workspace_invitation(message, client):
+    invite_to_workspace(message, client)
 
 
-@slack_app.event("pin_added")
-def if_pinned_update_pin(event, client):
-    update_emoji(event, client)
+# @slack_app.event("reaction_added")
+# def if_reacted_update_emoji(event, client):
+#     update_emoji(event, client)
+#
+#
+# @slack_app.event("pin_added")
+# def if_pinned_update_pin(event, client):
+#     update_emoji(event, client)
 
 
 @slack_app.event("channel_created")
@@ -84,6 +90,11 @@ def channel_created_events_handler(body):
 
 @slack_app.event("message")
 def message_events_handler(body):
+    logger.info(body)
+
+
+@slack_app.event("file_shared")
+def handle_file_shared_events(body):
     logger.info(body)
 
 
