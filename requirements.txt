@@ -2,3 +2,5 @@ slack_sdk>=3.0
 slack_bolt>=1.6.1
 certifi~=2022.6.15.1
 python-dotenv~=0.20.0
+mailchimp3~=3.0.17
+pandas~=1.4.3
