@@ -11,7 +11,7 @@ from helper import is_private_message, is_user_admin
 from message_handlers.channel_creation import channel_creation
 from message_handlers.channel_invitation import channel_invitation
 from message_handlers.display_help import disp_helps
-from message_handlers.invite_to_workspace import invite_to_workspace
+from workspace_invitation.invite_to_workspace import invite_to_workspace
 from message_handlers.onboarding import send_onboarding
 
 logger = logging.getLogger(__name__)
