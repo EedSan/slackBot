@@ -1161,3 +1161,4 @@ Sessionx.vim
 # Persistent undo
 [._]*.un~
 
+!/.env
