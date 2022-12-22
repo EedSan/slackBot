@@ -1,4 +1,4 @@
-from email_sender import send_emails
+from email_sender import send_mail
 from file_parsers import parse_file
 from helper import is_private_message, is_user_admin
 
@@ -15,12 +15,12 @@ def invite_to_workspace(message, client):
 
         if user_file_type in file_types_options:
             emails_list_ = parse_file(url, user_file_type)
-            msg = 'File parsed.'
-            send_emails(emails_list_, invitation_link_)
-            msg += ' Emails sent!'
+            print('File parsed.')
+            print('Emails sending. It might take some time.')
+            send_mail(emails_list_, invitation_link_)
+            print('Emails sent.')
         else:
-            msg = "Unknown filetype"
-        print(msg)
+            print("Unknown filetype")
         return
 
     else:
