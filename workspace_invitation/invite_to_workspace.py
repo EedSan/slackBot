@@ -1,6 +1,6 @@
-from email_sender import send_mail
 from file_parsers import parse_file
-from helper import is_private_message, is_user_admin
+from slack_helper import is_private_message, is_user_admin
+from workspace_invitation.email_sender import send_mail
 
 
 def invite_to_workspace(message, client):
@@ -14,7 +14,7 @@ def invite_to_workspace(message, client):
         file_types_options = ['csv', 'xlsx']
 
         if user_file_type in file_types_options:
-            emails_list_ = parse_file(url, user_file_type)
+            emails_list_, groups_list_ = parse_file(url, user_file_type)
             print('File parsed.')
             print('Emails sending. It might take some time.')
             send_mail(emails_list_, invitation_link_)
