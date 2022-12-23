@@ -7,7 +7,7 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.errors import SlackApiError
 
-from helper import is_private_message, is_user_admin
+from event_handlers.user_joined_workspace_handler import user_joined_workspace_event_handler
 from message_handlers.channel_creation import channel_creation
 from message_handlers.channel_invitation import channel_invitation
 from message_handlers.display_help import disp_helps
@@ -96,6 +96,17 @@ def message_events_handler(body):
 @slack_app.event("file_shared")
 def handle_file_shared_events(body):
     logger.info(body)
+
+
+@slack_app.event("team_joined")
+def handle_user_joined_workspace_event(event, client):
+    user_joined_workspace_event_handler(event, client)
+    logger.info(event)
+
+
+@slack_app.event("member_joined_channel")
+def handle_user_joined_channel_event(event, client):
+    logger.info(event)
 
 
 def main():
