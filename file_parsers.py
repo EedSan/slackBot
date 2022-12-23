@@ -9,8 +9,8 @@ def parse_file(link, filetype):
         df = xd.parse(xd.sheet_names[0], index_col=0, comment='#')
     else:
         df = pd.read_csv(link)
-    emails_list_ = df['emails'].tolist()
-    groups_list_ = df['groups'].tolist()
+    emails_list_ = df['email'].tolist()
+    groups_list_ = df['group'].tolist()
     users_tags_df = df[["emails", "groups"]]
 
     my_db = db_connection_open()
