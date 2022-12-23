@@ -10,7 +10,7 @@ def channel_invitation_by_user_tags(message, client):
     if not is_private_message(message) or not is_user_admin(client, message['user']):
         return
 
-    expr = r"^invite to[\s+](.+?)[\s+]((.+?))$"
+    expr = r"^invite to[\s+]\[(.+?)\][\s+]\[(.+?)\]$"
     channel_name_ = re.search(expr, message["text"]).group(1)
     tags_list_ = re.search(expr, message["text"]).group(2).split(" ")  # todo check if elements are tags
 
