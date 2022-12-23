@@ -5,12 +5,11 @@ import re
 from dotenv import load_dotenv
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
-from slack_sdk.errors import SlackApiError
 
 from event_handlers.user_joined_workspace_handler import user_joined_workspace_event_handler
 from message_handlers.channel_creation import channel_creation
-from message_handlers.channel_invitation import channel_invitation
-from message_handlers.display_help import disp_helps
+from message_handlers.channel_invitation import channel_invitation_by_user_tags
+from message_handlers.display_help import display_helps
 from workspace_invitation.invite_to_workspace import invite_to_workspace
 from message_handlers.onboarding import send_onboarding
 
@@ -29,7 +28,7 @@ def create_channel(message, client):
 
 @slack_app.message(re.compile(r"^invite to[\s+](.+?)$"))  # type: ignore
 def invite_to_channel(message, client):
-    channel_invitation(message, client, logger)
+    channel_invitation_by_user_tags(message, client)
 
 
 @slack_app.message(re.compile("^start$"))  # type: ignore
@@ -37,35 +36,9 @@ def onboarding(message, client):
     send_onboarding(message, client)
 
 
-@slack_app.message(re.compile(r"^write msg to channel #[\s+](.+?)$"))  # type: ignore
-def write_to_channel(message, client):
-    print(message)
-    if not is_private_message(message) or not is_user_admin(client, message['user']):
-        return
-    user_id = message["user"]
-    channel_name = re.search(r'channel #[\s+](.+?)$', message['text']).group(1)
-    comm = f"write to channel {channel_name}"
-    logger.info(f"Command: < {comm} > from user {user_id}")
-    channel_id = None
-    for result in client.conversations_list():
-        if channel_id is not None:
-            break
-        for channel in result["channels"]:
-            if channel["name"] == channel_name:
-                channel_id = channel["id"]
-                try:
-                    # env_xoxp_token = ""
-                    client.chat_postMessage(channel=channel_id,
-                                            text=f"some text sample")
-                    client.chat_postMessage(channel=user_id, text='post msg "hello channel" :white_check_mark:')
-                except SlackApiError as e:
-                    print(f"Error: {e}")
-                break
-
-
 @slack_app.message(re.compile(r"^help\s*(.*)$", flags=re.IGNORECASE))  # type: ignore
 def display_help(message, client):
-    disp_helps(message, client)
+    display_helps(message, client)
 
 
 @slack_app.message(re.compile(r"^(.*)join.slack.com/t/(.*)$"))  # type: ignore
@@ -75,11 +48,6 @@ def workspace_invitation(message, client):
 
 # @slack_app.event("reaction_added")
 # def if_reacted_update_emoji(event, client):
-#     update_emoji(event, client)
-#
-#
-# @slack_app.event("pin_added")
-# def if_pinned_update_pin(event, client):
 #     update_emoji(event, client)
 
 
