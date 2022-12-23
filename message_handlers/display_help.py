@@ -21,11 +21,10 @@ def help_invite_to_channel(user_id):
     invite_several_ = {"type": "section",
                        "text": {"type": "mrkdwn",
                                 "text": ('You can invite many users to many channels with one command, for this, '
-                                         'please list the channel names separated by commas.\n'
-                                         '\tE. g. `create channel Data-Science, Data-Analysis, Machine-Learning`\n'
-                                         '\t\tIn this particular case, channels named '
-                                         '_Data-Science_, _Data-Analysis_, _Machine-Learning_ '
-                                         'will be created and you will be added to them.'), }, }
+                                         'please list the channel names and group tags separated by commas.\n\tE. g. '
+                                         '`invite to channel [data-science, data-analysis] [KM-91, KM-92, KM-93]`\n'
+                                         '\t\tIn this particular case, users with tags `KM-91`, `KM-92`, `KM-93` '
+                                         'will be invited to channels named_data-science_, _data-analysis_, '), }, }
     divider_ = {"type": "divider"}
     return {"channel": user_id, "blocks": [general_invite_, divider_, invite_one_, divider_, invite_several_], }
 
@@ -48,9 +47,9 @@ def help_create_channel(user_id):
                        "text": {"type": "mrkdwn",
                                 "text": ('You can create several channels with one command, for this, '
                                          'please list the channel names separated by commas.\n'
-                                         '\tE. g. `create channel Data-Science, Data-Analysis, Machine-Learning`\n'
+                                         '\tE. g. `create channel data-science, data-analysis, machine-learning`\n'
                                          '\t\tIn this particular case, channels named '
-                                         '_Data-Science_, _Data-Analysis_, _Machine-Learning_ '
+                                         '_data-science_, _data-analysis_, _machine-learning_ '
                                          'will be created and you will be added to them.'), }, }
 
     divider_ = {"type": "divider"}
@@ -70,7 +69,8 @@ def general_help(user_id):
 
 def display_helps(message, client):
     print(message)
-    if not is_private_message(message) or not is_user_admin(client, message['user']):
+
+    if not is_private_message(message) and not is_user_admin(client, message['user']):
         return
 
     user_id = message["user"]
