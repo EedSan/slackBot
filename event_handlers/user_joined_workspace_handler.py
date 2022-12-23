@@ -17,7 +17,8 @@ def user_joined_workspace_event_handler(event, client):
     else:
         my_cursor.execute(
             "INSERT INTO users (user_email, is_present) value ('{u_email}', TRUE);".format(u_email=user_email_))
-        client.chat_postMessage(channel=user_id_from_event_, text="Please join the channels. :/")
+        client.chat_postMessage(channel=user_id_from_event_,
+                                text="Greetings. We suggest you join the channels if you please. :)")
     my_db.commit()
     my_cursor.close()
     my_db.close()
