@@ -1,98 +1,54 @@
-from slack_sdk import WebClient
+from slack_helper import is_private_message, is_user_admin
 
-from helper import is_private_message, is_user_admin
-
-
-class Onboarding:
-    """Constructs the onboarding message and stores the state of which tasks were completed."""
-
-    WELCOME_BLOCK = {
-        "type": "section",
-        "text": {
-            "type": "mrkdwn",
-            "text": (
-                "Welcome to Slack! :wave: We're so glad you're here. :blush:\n\n"
-                "*Get started by completing the steps below:*"
-            ),
-        },
-    }
-    DIVIDER_BLOCK = {"type": "divider"}
-
-    def __init__(self, channel):
-        self.channel = channel
-        self.username = "pythonboardingbot"
-        self.icon_emoji = ":robot_face:"
-        self.timestamp = ""
-        self.reaction_task_completed = False
-        self.pin_task_completed = False
-
-    def get_message_payload(self):
-        return {
-            "ts": self.timestamp,
-            "channel": self.channel,
-            "username": self.username,
-            "icon_emoji": self.icon_emoji,
-            "blocks": [
-                self.WELCOME_BLOCK,
-                self.DIVIDER_BLOCK,
-                *self._get_reaction_block(),
-                self.DIVIDER_BLOCK,
-                *self._get_pin_block(),
-            ],
-        }
-
-    def _get_reaction_block(self):
-        task_checkmark = self._get_checkmark(self.reaction_task_completed)
-        text = (
-            f"{task_checkmark} *Add an emoji reaction to this message* :thinking_face:\n"
-            "You can quickly respond to any message on Slack with an emoji reaction. "
-            "Reactions can be used for any purpose: voting, checking off to-do items, showing excitement."
-        )
-        information = (
-            ":information_source: *<https://get.slack.help/hc/en-us/articles/206870317-Emoji-reactions|"
-            "Learn How to Use Emoji Reactions>*"
-        )
-        return self._get_task_block(text, information)
-
-    def _get_pin_block(self):
-        task_checkmark = self._get_checkmark(self.pin_task_completed)
-        text = (
-            f"{task_checkmark} *Pin this message* :round_pushpin:\n"
-            "Important messages and files can be pinned to the details pane in any channel or"
-            " direct message, including group messages, for easy reference."
-        )
-        information = (
-            ":information_source: *<https://get.slack.help/hc/en-us/articles/205239997-Pinning-messages-and-files"
-            "|Learn How to Pin a Message>*"
-        )
-        return self._get_task_block(text, information)
-
-    @staticmethod
-    def _get_checkmark(task_completed: bool) -> str:
-        if task_completed:
-            return ":white_check_mark:"
-        return ":white_large_square:"
-
-    @staticmethod
-    def _get_task_block(text, information):
-        return [
-            {"type": "section", "text": {"type": "mrkdwn", "text": text}},
-            {"type": "context", "elements": [{"type": "mrkdwn", "text": information}]},
-        ]
-
+DIVIDER_BLOCK = {"type": "divider"}
 
 onboarding_sent = {}
 
 
-def start_onboarding(user_id: str, channel: str, client: WebClient):
-    onboarding_tutorial = Onboarding(channel)
-    msg = onboarding_tutorial.get_message_payload()
-    response = client.chat_postMessage(**msg)
-    onboarding_tutorial.timestamp = response["ts"]
+def onboarding_data(user_id):
+    general_text_ = {"type": "section",
+                     "text": {"type": "mrkdwn",
+                              "text": ("Welcome to Slack and SlackAutomationBot! :wave: "
+                                       "We're so glad you're here. :blush:\n\n"
+                                       "*Get started by completing the steps below:*"), }, }
+    divider_ = {"type": "divider"}
+    invite_to_workspace_ = {"type": "section",
+                            "text": {"type": "mrkdwn",
+                                     "text": ("Firstly invite users to this workspace by sending us your invitation "
+                                              "link and csv/xlsx file with list of user emails and "
+                                              "tags of groups they're belong to\n"), }, }
+    invitation_link_ = {"type": "section",
+                        "text": {"type": "mrkdwn",
+                                 "text": ("\t:question:Where do I get the invitation link from?\n"
+                                          "\t You can reach invitation link to your slack-workspace by following "
+                                          "this simple instruction:\n"
+                                          "\t1) Click on your workspace name at the top left corner.\n"
+                                          "\t2) Click on 'invite people to -your workspace name-' field\n"
+                                          "\t3) Click on ':link: Copy invite link' field"), }, }
+    invitation_file_ = {"type": "section",
+                        "text": {"type": "mrkdwn",
+                                 "text": ("\t:question:What should the invitation file look like?\n"
+                                          "\tSuch file should be csv/xlsx and and "
+                                          "must have columns named `email` and `group`. If your file have some another"
+                                          "columns except these two, it's not a problem, they are not taken into "
+                                          "account while processing.\n"
+                                          "\t Here is an example on such file:"), }, }
+    file_img_ = {
+        "type": "image",
+        "title": {
+            "type": "plain_text",
+            "text": "Example of invitation file",
+        },
+        "image_url": "https://i.ibb.co/bgX4tHx/invitation-file-example.png",
+        "alt_text": "marg"
+    }
+    return {"channel": user_id, "blocks": [general_text_, divider_, invite_to_workspace_, divider_, invitation_link_,
+                                           divider_, invitation_file_, file_img_], }
 
-    if channel not in onboarding_sent:
-        onboarding_sent[channel] = {}
-    onboarding_sent[channel][user_id] = onboarding_tutorial
+
+def start_onboarding(user_id, client):
+    onboarding_text_ = onboarding_data(user_id)
+    client.chat_postMessage(**onboarding_text_)
 
 
 def send_onboarding(message, client):
@@ -100,6 +56,4 @@ def send_onboarding(message, client):
         return
 
     user_id = message["user"]
-    response = client.conversations_open(users=user_id)
-    channel = response["channel"]["id"]
-    start_onboarding(user_id, channel, client)
+    start_onboarding(user_id, client)
