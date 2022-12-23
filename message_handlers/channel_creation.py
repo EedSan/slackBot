@@ -2,7 +2,7 @@ import re
 
 from slack_sdk.errors import SlackApiError
 
-from slack_helper import is_private_message, is_user_admin
+from slack_helper import is_private_message, is_user_admin, get_channel_id_from_name
 from db_helper import db_connection_open
 
 
@@ -15,10 +15,7 @@ def channel_creation(message, client, logger):
     channel_name = re.search(r'channel[\s+](.+?)$', message['text']).group(1)
     try:
         client.conversations_create(name=channel_name, is_private=False)
-        for item in client.conversations_list()["channels"]:
-            if item["name"] == channel_name:
-                channel_id_ = item['id']
-                break
+        channel_id_ = get_channel_id_from_name(client, channel_name)
         msg_created = f"Channel <#{channel_id_}> is created :white_check_mark:"
 
         my_db = db_connection_open()
