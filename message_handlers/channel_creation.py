@@ -32,4 +32,4 @@ def channel_creation(message, client, logger):
         msg_to_add = 'To invite other users to channel type `invite to [channel_name] [users_emails]`'
         msg_info = "For detailed information type `help invite to channel`"
         client.chat_postMessage(channel=user_id, text=f'{msg_created}. \n{msg_to_add}. {msg_info}')
-        client.conversations_invite(channel=channel_id_, users=[user_id])
+        # todo add a parameter indicating whether to add admin who use the bot to the channel or not
