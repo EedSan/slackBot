@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 SLACK_APP_TOKEN = os.environ["SLACK_APP_TOKEN"]
 SLACK_BOT_TOKEN = os.environ["SLACK_BOT_TOKEN"]
+# SLACK_APP_TOKEN = "xapp-1-A040XPVNLCX-4049127177031-80b77da6d0c368718db227f67094f7e161df6f3978a5edc38dfebe5e5c31f3a7"
+# SLACK_BOT_TOKEN = "xoxb-4048814839236-4046337972595-8iqTuueX0IcxxmUC5WOg528C"
 slack_app = App(token=SLACK_BOT_TOKEN, name="Automation Bot")
 
 
