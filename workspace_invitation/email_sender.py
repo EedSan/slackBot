@@ -1,12 +1,11 @@
 import hashlib
-from string import Template
-
+import os
+from dotenv import load_dotenv
 from mailchimp3 import MailChimp
 
-from workspace_invitation.html import html_data
-
-MAILCHIMP_API_KEY = "6fb3b3f970f46ad44321452f69ad6f4c-us21"
-MAILCHIMP_USERNAME = "slackautomatizationproject@gmail.com"
+load_dotenv()
+MAILCHIMP_API_KEY = os.environ["MAILCHIMP_API_KEY"]
+MAILCHIMP_USERNAME = os.environ["MAILCHIMP_USERNAME"]
 
 
 def send_mail(emails_list_, url_to_send_):
@@ -71,7 +70,5 @@ def campaign_creation(cli, audience_id, url_to_send="google.com"):
 
 
 def update_campaign_content(cli, campaign_id, url_to_send):
-    html_code = html_data
-    template = Template(html_code).safe_substitute()
     return cli.campaigns.content.update(campaign_id=campaign_id,
                                         data={'message': url_to_send})
