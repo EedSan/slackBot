@@ -1,6 +1,6 @@
 import os
 
-from mysql import connector
+import psycopg2 as connector  # migrated from mysql to postgresql
 from dotenv import load_dotenv
 
 
