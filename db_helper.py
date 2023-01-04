@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 def db_connection_open():
     """
-    Opens a connection to the database using enviromental variables.
+    Opens a connection to the database using environmental variables.
 
     :return: Database connection instance.
     """
