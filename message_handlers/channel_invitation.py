@@ -6,6 +6,15 @@ from slack_helper import is_private_message, is_user_admin, get_user_id_from_ema
 
 
 def channel_invitation_by_user_tags(message, client):
+    """
+    It implements inviting users who have a certain tag to the channel.
+
+    @param message:
+    @param client:
+    @return:
+
+    *
+    """
     print(message)
     if not is_private_message(message) or not is_user_admin(client, message['user']):
         return
