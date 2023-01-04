@@ -9,11 +9,10 @@ def channel_invitation_by_user_tags(message, client):
     """
     It implements inviting users who have a certain tag to the channel.
 
-    @param message:
-    @param client:
-    @return:
+    @param message: Query result with information about the current chat.
+    @param client: Slack connection instance.
 
-    *
+    *Works only with private chats and non-admin users
     """
     print(message)
     if not is_private_message(message) or not is_user_admin(client, message['user']):
@@ -71,6 +70,13 @@ def channel_invitation_by_user_tags(message, client):
 
 
 def invite_user_to_channel_by_email_via_db(client, user_email_, cursor):
+    """
+    Sends an invitation to the channel using pending entries from the database.
+
+    @param client: Slack connection instance.
+    @param user_email_: Invites specified user to specified channel.
+    @param cursor: Database connection cursor.
+    """
     cursor.execute("select slack_channel_id from users_channels join users u on u.user_id = users_channels.user_id "
                    "join channels c on c.channel_id = users_channels.channel_id where user_email like '{u_mail}'"
                    .format(u_mail=user_email_))
