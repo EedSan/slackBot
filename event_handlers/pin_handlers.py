@@ -2,6 +2,12 @@ from message_handlers.onboarding import onboarding_sent
 
 
 def update_pin(event, client):
+    """
+
+    @param event:
+    @param client: Slack connection instance.
+    """
+
     channel_id = event.get("channel_id")
     user_id = event.get("user")
     onboarding_tutorial = onboarding_sent[channel_id][user_id]
