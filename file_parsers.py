@@ -4,12 +4,6 @@ from db_helper import db_connection_open, is_user_email_in_db, is_tag_in_db
 
 
 def parse_file(link, filetype):
-    """
-    
-    @param link:
-    @param filetype:
-    @return:
-    """
     if filetype == 'xlsx':
         xd = pd.ExcelFile(link)
         df = xd.parse(xd.sheet_names[0], index_col=0, comment='#')
