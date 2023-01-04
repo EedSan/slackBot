@@ -4,6 +4,14 @@ from db_helper import db_connection_open, is_user_email_in_db, is_tag_in_db
 
 
 def parse_file(link, filetype):
+    """
+    Performs parsing of email addresses and user groups from a file, for subsequent invitations to the workspace.
+    Supported formats: XLSX, CSV.
+
+    :param link: The path to the file with the information.
+    :param filetype: Type of file with information.
+    :return: Lists of parsed email addresses and user groups.
+    """
     if filetype == 'xlsx':
         xd = pd.ExcelFile(link)
         df = xd.parse(xd.sheet_names[0], index_col=0, comment='#')
