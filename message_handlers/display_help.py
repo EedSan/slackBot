@@ -5,7 +5,10 @@ from slack_helper import is_private_message, is_user_admin
 
 def help_invite_to_channel(user_id):
     """
-    :return: message to given user with help description on invite users to channels
+    Stores information with instructions for inviting new users to the channel.
+
+    @param user_id: The ID of the user you want to give help message to.
+    @return: message to given user with help description on invite users to channels.
     """
     general_invite_ = {"type": "section",
                        "text": {"type": "mrkdwn",
@@ -31,7 +34,10 @@ def help_invite_to_channel(user_id):
 
 def help_create_channel(user_id):
     """
-    :return: message to given user with help description on create channels
+    Stores information with instructions for creating new channels in the workspace.
+
+    @param user_id: The ID of the user you want to give help message to.
+    @return: message to given user with help description on create channels.
     """
     general_create_ = {"type": "section",
                        "text": {"type": "mrkdwn",
@@ -58,8 +64,12 @@ def help_create_channel(user_id):
 
 def general_help(user_id):
     """
-    :return: message to given user with general help description
+    Stores information with instructions for general help description.
+
+    @param user_id: The ID of the user you want to give help message to.
+    @return: message to given user with general help description.
     """
+
     help_text_ = ('Welcome to SlackBOT help utility! \n'
                   '`*Write some thank words one first time usage`. *'
                   '\nIf you want to ask for help on a particular process, you can type "help _subject_". '
@@ -68,6 +78,14 @@ def general_help(user_id):
 
 
 def display_helps(message, client):
+    """
+    Displays the information with help for the user.
+
+    @param message: message to give user with any help purpose.
+    @param client: Slack connection instance.
+
+    *Works only with private chats and non-admin users
+    """
     print(message)
 
     if not is_private_message(message) and not is_user_admin(client, message['user']):

@@ -6,6 +6,12 @@ onboarding_sent = {}
 
 
 def onboarding_data(user_id):
+    """
+    Stores information about all the instructions that are sent to the user when he joins the workspace
+
+    @param user_id: The ID of the user you want to give instructions to.
+    @return: Instructions to be sent to the user.
+    """
     general_text_ = {"type": "section",
                      "text": {"type": "mrkdwn",
                               "text": ("Welcome to Slack and SlackAutomationBot! :wave: "
@@ -47,11 +53,25 @@ def onboarding_data(user_id):
 
 
 def start_onboarding(user_id, client):
+    """
+    Initiates the process of sending a welcome message to the user.
+
+    @param user_id: The ID of the user you want to give massege to.
+    @param client: Slack connection instance.
+    """
     onboarding_text_ = onboarding_data(user_id)
     client.chat_postMessage(**onboarding_text_)
 
 
 def send_onboarding(message, client):
+    """
+    Sends a welcome message with instructions to the new user.
+
+    *Works only with private chats and non-admin users
+    @param message: JSON with an information about welcome message * instructions.
+    @param client: Slack connection instance.
+    """
+
     if not is_private_message(message) or not is_user_admin(client, message['user']):
         return
 

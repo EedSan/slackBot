@@ -3,6 +3,12 @@ from message_handlers.channel_invitation import invite_user_to_channel_by_email_
 
 
 def user_joined_workspace_event_handler(event, client):
+    """
+    Handles the event of a new user joining the workspace. Enters information about him into the database.
+
+    @param event:  User accession event instance.
+    @param client: Slack connection instance.
+    """
     user_id_from_event_ = event['user']
     user_email_ = client.users_info(user_id_from_event_)['user']['profile']['email']
 

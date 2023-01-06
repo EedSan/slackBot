@@ -7,6 +7,14 @@ from db_helper import db_connection_open
 
 
 def channel_creation(message, client, logger):
+    """
+    Creates a channel with specified characteristics. Uses templates to create two channels at once, one for lecture information and one for practical exercises.
+
+    *Works only with private chats and non-admin users
+    @param message: Query result with information about the current event.
+    @param client: Slack connection instance.
+    @param logger: Logger instance.
+    """
     print(f"msg passed to channel_creation: {message}")
     if not is_private_message(message) or not is_user_admin(client, message['user']):
         return
