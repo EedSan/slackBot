@@ -5,3 +5,4 @@ python-dotenv~=0.20.0
 mailchimp3~=3.0.17
 pandas~=1.4.3
 mysql-connector-python~=8.0.31
+mock~=5.0.0
