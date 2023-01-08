@@ -2,12 +2,13 @@ from db_helper import db_connection_open
 from message_handlers.channel_invitation import invite_user_to_channel_by_email_via_db
 
 
-def user_joined_workspace_event_handler(event, client):
+def user_joined_workspace_event_handler(event, client, logger):
     """
     Handles the event of a new user joining the workspace. Enters information about him into the database.
 
     @param event:  User accession event instance.
     @param client: Slack connection instance.
+    :param logger: logger instance
     """
     user_id_from_event_ = event['user']
     user_email_ = client.users_info(user_id_from_event_)['user']['profile']['email']
@@ -25,6 +26,7 @@ def user_joined_workspace_event_handler(event, client):
             "INSERT INTO users (user_email, is_present) value ('{u_email}', TRUE);".format(u_email=user_email_))
         client.chat_postMessage(channel=user_id_from_event_,
                                 text="Greetings. We suggest you join the channels if you please. :)")
+        
     my_db.commit()
     my_cursor.close()
     my_db.close()

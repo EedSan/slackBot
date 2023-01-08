@@ -52,28 +52,33 @@ def onboarding_data(user_id):
                                            divider_, invitation_file_, file_img_], }
 
 
-def start_onboarding(user_id, client):
+def start_onboarding(user_id_, client, logger):
     """
     Initiates the process of sending a welcome message to the user.
 
-    @param user_id: The ID of the user you want to give massege to.
+    @param user_id_: The ID of the user you want to give message to.
     @param client: Slack connection instance.
+    @param logger:
     """
-    onboarding_text_ = onboarding_data(user_id)
+    onboarding_text_ = onboarding_data(user_id_)
     client.chat_postMessage(**onboarding_text_)
+    logger.info(f"Message with data `{onboarding_text_}` is send to user {user_id_}")
 
 
-def send_onboarding(message, client):
+def send_onboarding(message, client, logger):
     """
     Sends a welcome message with instructions to the new user.
 
-    *Works only with private chats and non-admin users
+    *Works only with private chats and admin users
     @param message: JSON with an information about welcome message * instructions.
     @param client: Slack connection instance.
+    @param logger: logger instance
     """
-
+    logger.info(f"Message from user passed to send_onboarding: `{message}`")
     if not is_private_message(message) or not is_user_admin(client, message['user']):
+        logger.warning(f"Message from user passed to channel_creation wasn't private / from admin.")
         return
 
-    user_id = message["user"]
-    start_onboarding(user_id, client)
+    user_id_ = message["user"]
+    start_onboarding(user_id_, client, logger)
+    logger.info(f"Status: SUCCESSFUL. Onboarding message display complete.")

@@ -17,10 +17,11 @@ def is_private_message(message):
     @param message: Query result with information about the current chat.
     @return: Check result boolean.
     """
+
     return message["channel_type"] == "im"
 
 
-def get_user_id_from_email(client, email_):
+def get_user_id_by_email(client, email_):
     """
     Gets the user's Slack ID from his or her email address, if such a user exists.
 
@@ -36,7 +37,7 @@ def get_user_id_from_email(client, email_):
         return
 
 
-def get_channel_id_from_name(client, channel_name_):
+def get_channel_id_by_name(client, channel_name_):
     """
     Gets the Slack channel ID by its name, if such a channel exists.
 

@@ -13,13 +13,9 @@ from message_handlers.display_help import display_helps
 from workspace_invitation.invite_to_workspace import invite_to_workspace
 from message_handlers.onboarding import send_onboarding
 
-logger = logging.getLogger(__name__)
-
 load_dotenv()
 SLACK_APP_TOKEN = os.environ["SLACK_APP_TOKEN"]
 SLACK_BOT_TOKEN = os.environ["SLACK_BOT_TOKEN"]
-# SLACK_APP_TOKEN = "xapp-1-A040XPVNLCX-4049127177031-80b77da6d0c368718db227f67094f7e161df6f3978a5edc38dfebe5e5c31f3a7"
-# SLACK_BOT_TOKEN = "xoxb-4048814839236-4046337972595-8iqTuueX0IcxxmUC5WOg528C"
 slack_app = App(token=SLACK_BOT_TOKEN, name="Automation Bot")
 
 
@@ -31,6 +27,7 @@ def create_channel(message, client):
     :param message: Request with all information about channel, to be created.
     :param client: Slack connection instance.
     """
+    logger = logging.getLogger("channel creation")
     channel_creation(message, client, logger)
 
 
@@ -42,8 +39,8 @@ def invite_to_channel(message, client):
     :param message: Request with all information about user and channel, to be invited in.
     :param client: Slack connection instance.
     """
-
-    channel_invitation_by_user_tags(message, client)
+    logger = logging.getLogger("channel invitation")
+    channel_invitation_by_user_tags(message, client, logger)
 
 
 @slack_app.message(re.compile("^start$"))  # type: ignore
@@ -54,7 +51,8 @@ def onboarding(message, client):
     :param message: Request with all information about user and the instructions, to be sent.
     :param client: Slack connection instance.
     """
-    send_onboarding(message, client)
+    logger = logging.getLogger("onboarding help")
+    send_onboarding(message, client, logger)
 
 
 @slack_app.message(re.compile(r"^help\s*(.*)$", flags=re.IGNORECASE))  # type: ignore
@@ -65,7 +63,8 @@ def display_help(message, client):
     :param message: Request with all information about user and the instructions, to be sent.
     :param client: Slack connection instance.
     """
-    display_helps(message, client)
+    logger = logging.getLogger("general help")
+    display_helps(message, client, logger)
 
 
 @slack_app.message(re.compile(r"^(.*)join.slack.com/t/(.*)$"))  # type: ignore
@@ -76,12 +75,8 @@ def workspace_invitation(message, client):
     :param message: Request with all information about user email and the invitation, to be sent.
     :param client: Slack connection instance.
     """
-    invite_to_workspace(message, client)
-
-
-# @slack_app.event("reaction_added")
-# def if_reacted_update_emoji(event, client):
-#     update_emoji(event, client)
+    logger = logging.getLogger("workspace invitation")
+    invite_to_workspace(message, client, logger)
 
 
 @slack_app.event("channel_created")
@@ -91,6 +86,7 @@ def channel_created_events_handler(body):
 
     :param body: JSON with all the basic information about the event.
     """
+    logger = logging.getLogger("channel created event")
     logger.info(body)
 
 
@@ -101,7 +97,7 @@ def message_events_handler(body):
 
     :param body: JSON with all the basic information about the event.
     """
-
+    logger = logging.getLogger("message received event")
     logger.info(body)
 
 
@@ -112,7 +108,7 @@ def handle_file_shared_events(body):
 
     :param body: JSON with all the basic information about the event.
     """
-
+    logger = logging.getLogger("file shared event")
     logger.info(body)
 
 
@@ -124,19 +120,20 @@ def handle_user_joined_workspace_event(event, client):
     :param event: JSON with all the basic information about the event.
     :param client: Slack connection instance.
     """
-
-    user_joined_workspace_event_handler(event, client)
+    logger = logging.getLogger("user joined workspace event")
+    user_joined_workspace_event_handler(event, client, logger)
     logger.info(event)
 
 
 @slack_app.event("member_joined_channel")
-def handle_user_joined_channel_event(event, client):
+def handle_user_joined_channel_event(event, _):
     """
     Tracks the channel user joining event and records it in the logs.
 
     :param event: JSON with all the basic information about the event.
     :param client:Slack connection instance.
     """
+    logger = logging.getLogger("user joined channel event")
     logger.info(event)
 
 

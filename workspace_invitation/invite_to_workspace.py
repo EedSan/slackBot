@@ -3,7 +3,7 @@ from slack_helper import is_private_message, is_user_admin
 from workspace_invitation.email_sender import send_mail
 
 
-def invite_to_workspace(message, client):
+def invite_to_workspace(message, client, logger):
     if not is_private_message(message) or not is_user_admin(client, message['user']):
         return
 
