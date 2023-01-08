@@ -1,0 +1,28 @@
+{
+  "client_msg_id": "f7c3558c-9261-4deb-a2fc-c75f4e3000ef",
+  "type": "message",
+  "text": "create channel-1",
+  "user": "U04ASE6DX60",
+  "ts": "1673042752.450699",
+  "blocks": [
+    {
+      "type": "rich_text",
+      "block_id": "8XM6O",
+      "elements": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "text",
+              "text": "create channel sdfas"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "team": "T04APT1PCQK",
+  "channel": "D04AM2MC76Z",
+  "event_ts": "1673042752.450699",
+  "channel_type": "im"
+}
