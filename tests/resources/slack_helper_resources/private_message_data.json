@@ -1,0 +1,28 @@
+{
+  "client_msg_id": "707ff709-1504-46ff-942f-2c66f870217f",
+  "type": "message",
+  "text": "start",
+  "user": "U04ASE6DX60",
+  "ts": "1673004208.007299",
+  "blocks": [
+    {
+      "type": "rich_text",
+      "block_id": "n3C+h",
+      "elements": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "text",
+              "text": "start"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "team": "T04APT1PCQK",
+  "channel": "D04AM2MC76Z",
+  "event_ts": "1673004208.007299",
+  "channel_type": "im"
+}
